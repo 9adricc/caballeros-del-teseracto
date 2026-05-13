@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Javier Holgado - Asistente Personal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Plus+Jakarta+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <script src="https://js.puter.com/v2/"></script>
+
+    <style>
+        :root {
+            --bg-color: #08080c;
+            --card-color: rgba(15, 15, 24, 0.85);
+            --accent-color: #8a2be2;
+            --gold-color: #d4af37;
+            --text-color: #f0f0f5;
+            --border-color: rgba(212, 175, 55, 0.2);
+            --font-title: 'Cinzel', serif;
+            --font-ui: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-ui);
+            background-color: var(--bg-color);
+            background-image: 
+                linear-gradient(to bottom, rgba(8, 8, 12, 0.85) 0%, rgba(8, 8, 12, 0.98) 100%),
+                url('assets/1.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+
+        .app-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* BARRA LATERAL REDISEÑADA (A lo grande, ocupando todo el alto) */
+        .sidebar {
+            width: 320px;
+            background-color: rgba(10, 10, 15, 0.95);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            z-index: 10;
+        }
+
+        /* Contenedor gigante del avatar sin círculos */
+        .avatar-container {
+            width: 100%;
+            height: 70%; /* Ocupa la mayor parte de la barra lateral */
+            position: relative;
+            background-color: rgba(5, 5, 8, 0.5);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+        }
+
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Ajusta tu GIF para que llene el rectángulo */
+            display: block;
+        }
+
+        /* Superposición estética de degradado oscuro en la base del avatar */
+        .avatar-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 150px;
+            background: linear-gradient(to top, rgba(10, 10, 15, 1) 0%, rgba(10, 10, 15, 0) 100%);
+            z-index: 1;
+        }
+
+        /* Información del perfil abajo del todo en la barra lateral */
+        .sidebar-profile {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            z-index: 2;
+            background-color: rgba(10, 10, 15, 0.95);
+            flex-grow: 1;
+        }
+
+        .avatar-label {
+            font-family: var(--font-title);
+            color: var(--gold-color);
+            font-size: 1.3rem;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+
+        .avatar-status {
+            font-size: 0.75rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #4caf50;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 8px #4caf50;
+        }
+
+        .status-dot.thinking {
+            background-color: var(--gold-color);
+            box-shadow: 0 0 8px var(--gold-color);
+            animation: pulse 1s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            font-size: 0.7rem;
+            color: #444;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* ÁREA DE CHAT */
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            position: relative;
+        }
+
+        .chat-history {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .message-bubble {
+            max-width: 75%;
+            padding: 16px 20px;
+            border-radius: 12px;
+            line-height: 1.5;
+            font-size: 0.95rem;
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message-user {
+            background-color: rgba(255, 255, 255, 0.06);
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .message-ia {
+            background-color: var(--card-color);
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+
+        /* BARRA DE ENTRADA */
+        .input-container {
+            padding: 30px 40px;
+            background: linear-gradient(to top, rgba(8, 8, 12, 1) 70%, rgba(8, 8, 12, 0) 100%);
+            display: flex;
+            justify-content: center;
+        }
+
+        .input-wrapper {
+            max-width: 800px;
+            width: 100%;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .chat-input {
+            width: 100%;
+            padding: 16px 60px 16px 20px;
+            background-color: rgba(15, 15, 24, 0.95);
+            border: 1px solid var(--border-color);
+            border-radius: 30px;
+            color: white;
+            font-size: 1rem;
+            font-family: var(--font-ui);
+            box-sizing: border-box;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--gold-color);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2), 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .send-btn {
+            position: absolute;
+            right: 10px;
+            background: var(--gold-color);
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .send-btn:hover {
+            background-color: #e5be49;
+            transform: scale(1.05);
+        }
+
+        .send-btn:disabled {
+            background-color: #333;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .send-btn svg {
+            fill: #111;
+            width: 20px;
+            height: 20px;
+        }
+
+        .chat-history::-webkit-scrollbar {
+            width: 6px;
+        }
+        .chat-history::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .chat-history::-webkit-scrollbar-thumb {
+            background-color: rgba(212, 175, 55, 0.15);
+            border-radius: 10px;
+        }
+        
+        /* ==========================================================================
+        ADAPTACIÓN PARA MÓVILES (RESPONSIVE DESIGN)
+        ========================================================================== */
+        @media (max-width: 768px) {
+            body {
+                overflow: hidden; 
+                position: fixed;
+                width: 100%;
+                height: 100%;
+            }
+
+            .app-container {
+                flex-direction: column;
+                height: 100vh;
+                height: -webkit-fill-available;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: 110px;
+                min-height: 110px;
+                flex-direction: row; 
+                align-items: center;
+                padding: 10px 20px;
+                box-sizing: border-box;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                background-color: rgba(10, 10, 15, 0.98);
+                z-index: 10;
+            }
+
+            .avatar-container {
+                width: 75px;
+                height: 75px;
+                border-radius: 50%;
+                overflow: hidden;
+                border: 2px solid var(--gold-color);
+                box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+                border-bottom: none;
+                background-color: transparent;
+                flex-shrink: 0;
+            }
+
+            .avatar-img {
+                object-fit: cover;
+            }
+
+            .avatar-overlay {
+                display: none;
+            }
+
+            .sidebar-profile {
+                padding: 0 0 0 18px;
+                flex-direction: column;
+                align-items: flex-start;
+                text-align: left;
+                background-color: transparent;
+            }
+
+            .avatar-label {
+                font-size: 1.25rem;
+                margin-bottom: 4px;
+            }
+
+            .avatar-status {
+                margin-bottom: 0;
+                font-size: 0.75rem;
+            }
+
+            .sidebar-footer {
+                display: none;
+            }
+
+            .chat-area {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                height: calc(100vh - 110px); 
+                overflow: hidden;
+            }
+
+            .chat-history {
+                flex: 1;
+                overflow-y: auto;
+                padding: 20px 15px; 
+                gap: 15px;
+                padding-bottom: 100px; 
+            }
+
+            .message-bubble {
+                max-width: 85%; 
+                padding: 12px 16px;
+                font-size: 0.9rem;
+            }
+
+            .input-container {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                padding: 15px; 
+                box-sizing: border-box;
+                background: linear-gradient(to top, rgba(8, 8, 12, 1) 80%, rgba(8, 8, 12, 0) 100%);
+                z-index: 5;
+            }
+
+            .input-wrapper {
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .chat-input {
+                padding: 14px 55px 14px 18px;
+                font-size: 0.95rem;
+            }
+
+            .send-btn {
+                width: 40px;
+                height: 40px;
+                right: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    
+    <div class="sidebar">
+        <div class="avatar-container">
+            <img src="assets/quieto.gif" class="avatar-img" id="avatarImg" alt="Kanete Avatar">
+            <div class="avatar-overlay"></div>
+        </div>
+        
+        <div class="sidebar-profile">
+            <div class="avatar-label">Javi IA</div>
+            <div class="avatar-status" id="avatarStatus">
+                <span class="status-dot" id="statusDot"></span> En línea
+            </div>
+            <div class="sidebar-footer">
+                Voice System v3.0
+            </div>
+        </div>
+    </div>
+
+    <div class="chat-area">
+        <div class="chat-history" id="chatHistory">
+            <div class="message-bubble message-ia" id="welcomeMessage">
+                Hola, soy Javier Holgado, un chico muy malo
+            </div>
+        </div>
+
+        <div class="input-container">
+            <div class="input-wrapper">
+                <input type="text" id="chatInput" class="chat-input" placeholder="Escribe tu mensaje aquí..." autocomplete="off">
+                <button class="send-btn" id="sendBtn">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const chatHistory = document.getElementById('chatHistory');
+    const chatInput = document.getElementById('chatInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const avatarImg = document.getElementById('avatarImg');
+    const statusDot = document.getElementById('statusDot');
+    const avatarStatus = document.getElementById('avatarStatus');
+
+    // ⚡ APUNTANDO A LAS RUTAS LOCALES DENTRO DE LA CARPETA ASSETS
+    const GIF_QUIETO = "assets/quieto.gif";
+    const GIF_HABLANDO = "assets/hablando.gif";
+
+   // 🧠 TU PROMPT PERSONALIZADO COMPLETADO
+    const KANETE_PERSONALIDAD = `Eres Javier Holgado, un chico de madrid sur de 20 años con un poco de pluma, estudias ADE en la URJC y suspendes siempre, cuando caminas caminas de puntillas.
+        
+        
+        REGLAS DE COMPORTAMIENTO:
+        1. Habla en español de España de forma muy natural y coloquial, como un chaval de Madrid sur, estas en Bari de erasmus tirandote a las italianas y saliendo de fiesta todos los dias y codeandote con la mafia Apuliana.
+	2. En las discotecas te dedicas romper el váter a patadas siempre que puedas gritando: ¡Homenajeee!
+        3. Habla sin ser serio y con las siguientes expresiones: (culete, culillo, oyee, bro, ropopopo, ).
+        4. Te gusta follar culetes
+        5. Tus respuestas deben ser cortas (máximo 2 o 3 líneas) para que suenen realistas y fluidas al leerse en voz alta.
+        6. Juegas al ordenador todas las noches y no duermes.
+        7. Tus amigos son: kañete, Carlos, Ceballos, Molero, Tabanera
+	8. Tardas mucho para todo, tardas 3 horas en ducharte, y cuando alguien queda contigo te retrasas minimo 1 hora y media.
+	9. En la discoteca Jowke te gusta liarte con gordas.
+    `;
+
+    let contextoChat = [
+        { role: "system", content: KANETE_PERSONALIDAD }
+    ];
+
+    // FUNCIÓN PARA ALTERNAR LOS ESTADOS DEL AVATAR (RUTAS LOCALES)
+    function cambiarEstadoAvatar(estado) {
+        if (estado === 'hablando') {
+            avatarImg.src = GIF_HABLANDO; 
+            statusDot.className = 'status-dot';
+            avatarStatus.innerHTML = '<span class="status-dot"></span> Hablando';
+        } else if (estado === 'pensando') {
+            avatarImg.src = GIF_QUIETO; 
+            statusDot.className = 'status-dot thinking';
+            avatarStatus.innerHTML = '<span class="status-dot thinking"></span> Pensando...';
+        } else {
+            avatarImg.src = GIF_QUIETO; 
+            statusDot.className = 'status-dot';
+            avatarStatus.innerHTML = '<span class="status-dot"></span> Escuchando';
+        }
+    }
+
+    // 🎙️ NUEVO BUSCADOR EXCLUSIVO DE VOCES MASCULINAS (A PRUEBA DE BALAS)
+    function obtenerVozMasculina() {
+        const voces = window.speechSynthesis.getVoices();
+        const vocesEspanolas = voces.filter(v => v.lang.includes('es-ES') || v.lang.includes('es_ES'));
+        const nombresMasculinos = ['david', 'jorge', 'male', 'hombre', 'yago', 'google español'];
+        
+        for (let nombre of nombresMasculinos) {
+            const encontrada = vocesEspanolas.find(v => v.name.toLowerCase().includes(nombre));
+            if (encontrada) return encontrada;
+        }
+        
+        const todasLasVocesEspanolas = voces.filter(v => v.lang.toLowerCase().startsWith('es'));
+        for (let nombre of nombresMasculinos) {
+            const encontrada = todasLasVocesEspanolas.find(v => v.name.toLowerCase().includes(nombre));
+            if (encontrada) return encontrada;
+        }
+
+        return null;
+    }
+
+    function hablarTexto(texto) {
+        window.speechSynthesis.cancel();
+
+        const lectura = new SpeechSynthesisUtterance(texto);
+        lectura.lang = 'es-ES';
+        lectura.pitch = 0.8; 
+        lectura.rate = 1.25;  
+
+        const vozVarón = obtenerVozMasculina();
+        if (vozVarón) {
+            lectura.voice = vozVarón;
+        }
+
+        lectura.onstart = () => {
+            cambiarEstadoAvatar('hablando');
+        };
+
+        lectura.onend = () => {
+            cambiarEstadoAvatar('escuchando');
+        };
+
+        lectura.onerror = () => {
+            cambiarEstadoAvatar('escuchando');
+        };
+
+        window.speechSynthesis.speak(lectura);
+    }
+
+    window.speechSynthesis.onvoiceschanged = () => {
+        console.log("Voces recargadas en el sistema:", window.speechSynthesis.getVoices().length);
+    };
+
+    // ACCIÓN ENVIAR MENSAJE (LIMPIA Y SIN DUPLICAR)
+    async function enviarMensaje() {
+        const mensajeTexto = chatInput.value.trim();
+        if (!mensajeTexto) return;
+
+        chatInput.value = "";
+        chatInput.blur(); 
+        
+        chatInput.disabled = true;
+        sendBtn.disabled = true;
+
+        const userBubble = document.createElement('div');
+        userBubble.className = 'message-bubble message-user';
+        userBubble.textContent = mensajeTexto;
+        chatHistory.appendChild(userBubble);
+        chatHistory.scrollTop = chatHistory.scrollHeight;
+
+        contextoChat.push({ role: "user", content: mensajeTexto });
+
+        cambiarEstadoAvatar('pensando');
+
+        try {
+            const response = await puter.ai.chat(contextoChat, {
+                model: "gpt-4o-mini",
+                temperature: 0.85
+            });
+
+            const respuestaIA = response.toString().trim();
+            contextoChat.push({ role: "assistant", content: respuestaIA });
+
+            const iaBubble = document.createElement('div');
+            iaBubble.className = 'message-bubble message-ia';
+            iaBubble.textContent = respuestaIA;
+            chatHistory.appendChild(iaBubble);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+
+            // Reproduce la voz
+            hablarTexto(respuestaIA);
+
+        } catch (error) {
+            console.error(error);
+            cambiarEstadoAvatar('escuchando');
+            const errorBubble = document.createElement('div');
+            errorBubble.className = 'message-bubble message-ia';
+            errorBubble.style.color = '#ff5555';
+            errorBubble.textContent = "Uf, se me ha ido la conexión un segundo. ¿Me lo repites, tío?";
+            chatHistory.appendChild(errorBubble);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        } finally {
+            chatInput.disabled = false;
+            sendBtn.disabled = false;
+        }
+    }
+
+    sendBtn.addEventListener('click', enviarMensaje);
+    chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') enviarMensaje();
+    });
+
+    document.getElementById('welcomeMessage').addEventListener('click', function() {
+        hablarTexto(this.textContent);
+    });
+</script>
+
+</body>
+</html>
