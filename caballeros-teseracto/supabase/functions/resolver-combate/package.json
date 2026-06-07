@@ -1,0 +1,10 @@
+{
+  "name": "resolver-combate",
+  "version": "1.0.0",
+  "description": "Edge Function para resolver combates con IA (DeepSeek v4)",
+  "main": "index.ts",
+  "scripts": {
+    "start": "deno run --allow-net --allow-env index.ts"
+  },
+  "dependencies": {}
+}

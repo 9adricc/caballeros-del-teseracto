@@ -1,0 +1,77 @@
+@import "tailwindcss";
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #030712;
+  color: #f3f4f6;
+}
+
+input, textarea, select {
+  font-family: inherit;
+}
+
+/* Scrollbar custom */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #374151;
+  border-radius: 2px;
+}
+
+/* Animaciones */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 5px rgba(234, 179, 8, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(234, 179, 8, 0.6); }
+}
+
+.card-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Animación de fade in */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fadeIn {
+  animation: fadeIn 0.8s ease-out forwards;
+}
+
+/* Efecto máquina de escribir */
+@keyframes typing {
+  from { width: 0; }
+  to { width: 100%; }
+}
+.typing-effect {
+  overflow: hidden;
+  white-space: nowrap;
+  animation: typing 4s steps(80, end);
+  display: inline-block;
+  max-width: 100%;
+}
+
+/* Brillo pulsante para el VS */
+@keyframes vsPulse {
+  0%, 100% { transform: scale(1); text-shadow: 0 0 10px rgba(234, 179, 8, 0.3); }
+  50% { transform: scale(1.1); text-shadow: 0 0 25px rgba(234, 179, 8, 0.8); }
+}
+.animate-vs {
+  animation: vsPulse 1.5s ease-in-out infinite;
+}
