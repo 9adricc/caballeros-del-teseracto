@@ -134,6 +134,11 @@ export default function ArenaPage() {
     return 3 - (ataquesHoy[amigoId] || 0)
   }
 
+  const registrarAtaque = (amigoId: string) => {
+    const nuevos = { ...ataquesHoy, [amigoId]: (ataquesHoy[amigoId] || 0) + 1 }
+    setAtaquesHoy(nuevos)
+  }
+
   const startBattle = async () => {
     if (!usuario || buildAtacante.length === 0 || !selectedFriend || buildDefensor.length === 0) return
     if (getAtaquesRestantes(selectedFriend.id) <= 0) {
